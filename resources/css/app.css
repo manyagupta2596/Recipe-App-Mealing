@@ -1,0 +1,16 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@import "~filepond/dist/filepond.min.css";
+
+[x-cloak] {
+    display: none !important;
+}
+.rating {
+    unicode-bidi: bidi-override;
+    direction: rtl;
+}
+.rating > i:hover:before,
+.rating > i:hover ~ i:before{
+    @apply font-black;
+}

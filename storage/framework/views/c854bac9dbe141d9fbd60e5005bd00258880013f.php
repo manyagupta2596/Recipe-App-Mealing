@@ -1,0 +1,159 @@
+
+
+<?php $__env->startSection('title', ucfirst($recipe->name)); ?>
+
+<?php $__env->startSection('content'); ?>
+<div class="space-y-4">
+    <div class="w-full h-screen/4 lg:h-screen/3">
+        <?php if($recipe->getMedia()->count() > 0): ?>
+            <div class="w-full h-full rounded-xl bg-center bg-no-repeat bg-cover" style="background-image:url('<?php echo e($recipe->getFirstMediaUrl()); ?>');">
+                <div class="relative bg-gray-900 bg-opacity-60 h-full w-full flex justify-center uppercase text-white rounded-xl">
+                    <div class="absolute top-3 right-3 text-red-300">
+                        <?php if(Auth()->user()->likedRecipes()->where('recipe_id', $recipe->id)->count() > 0): ?>
+                            <a href="<?php echo e(route('recipes.unlike', $recipe)); ?>">
+                                <i class="fa fa-heart fa-2x"></i>
+                            </a>
+                        <?php else: ?>
+                            <a href="<?php echo e(route('recipes.like', $recipe)); ?>">
+                                <i class="far fa-heart fa-2x"></i>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                    <span class="self-center px-2 text-center text-xl lg:text-5xl">
+                        <?php echo e($recipe->name); ?>
+
+                    </span>
+                </div>
+            </div>
+        <?php else: ?>
+            <div class="relative flex justify-center w-full h-full rounded-xl bg-gray-600 uppercase text-white">
+                <div class="absolute top-3 right-3 text-red-300">
+                    <?php if(Auth()->user()->likedRecipes()->where('recipe_id', $recipe->id)->count() > 0): ?>
+                        <a href="<?php echo e(route('recipes.unlike', $recipe)); ?>">
+                            <i class="fa fa-heart fa-2x"></i>
+                        </a>
+                    <?php else: ?>
+                        <a href="<?php echo e(route('recipes.like', $recipe)); ?>">
+                            <i class="far fa-heart fa-2x"></i>
+                        </a>
+                    <?php endif; ?>
+                </div>
+                <span class="self-center px-2 text-center  text-xl lg:text-5xl">
+                    <?php echo e($recipe->name); ?>
+
+                </span>
+            </div>
+        <?php endif; ?>
+    </div>
+    <div class="w-full p-4 bg-white rounded-md shadow dark:bg-gray-700">
+        <div class="flex flex-col lg:flex-row lg:justify-between">
+            <h4 class="text-2xl font-bold mb-5 dark:text-gray-200 text-green-700">
+                Recipe Details
+            </h4>
+            <div class="order-first lg:order-last pb-3 lg:flex lg:space-x-2">
+                <?php
+if (! isset($_instance)) {
+    $html = \Livewire\Livewire::mount('recipes.rate', ['recipeId' => $recipe->id])->html();
+} elseif ($_instance->childHasBeenRendered('rND70kZ')) {
+    $componentId = $_instance->getRenderedChildComponentId('rND70kZ');
+    $componentTag = $_instance->getRenderedChildComponentTagName('rND70kZ');
+    $html = \Livewire\Livewire::dummyMount($componentId, $componentTag);
+    $_instance->preserveRenderedChild('rND70kZ');
+} else {
+    $response = \Livewire\Livewire::mount('recipes.rate', ['recipeId' => $recipe->id]);
+    $html = $response->html();
+    $_instance->logRenderedChild('rND70kZ', $response->id(), \Livewire\Livewire::getRootElementTagName($html));
+}
+echo $html;
+?>
+                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('meal_update')): ?>
+                    <div>
+                    <?php if($recipe->user->id == Auth::id()): ?>
+                        <a href="<?php echo e(route('recipes.edit', $recipe)); ?>" class="w-full lg:w-auto rounded shadow-md py-1 px-2 bg-green-700 text-white hover:bg-green-500 text-xs">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                    <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <p class="mb-5 dark:text-gray-200">
+            <strong>Serves</strong> <?php echo e($recipe->servings); ?><br>
+            <strong>Suitable for</strong>
+                <?php if($recipe->adults): ?>
+                    Adults
+                <?php endif; ?>
+                <?php if($recipe->adults && $recipe->kids): ?>
+                    &amp;
+                <?php endif; ?>
+                <?php if($recipe->kids): ?>
+                    Children
+                <?php endif; ?>
+            <br>
+            <strong>Cooking and Prep Time</strong> <?php echo e($recipe->timing); ?> minutes<br>
+            <strong>Allergens</strong> 
+            <?php $__currentLoopData = $recipe->allergens; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $allergen): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <span class="allergen-level-<?php echo e($allergen->pivot->level); ?> text-lg">
+                    <i class="<?php echo e($allergen->icon); ?>" title="
+                        <?php if($allergen->pivot->level == "yes"): ?>
+                            Contains <?php echo e($allergen->name); ?>
+
+                        <?php else: ?>
+                            May Contain <?php echo e($allergen->name); ?>
+
+                        <?php endif; ?>
+                        
+                        "></i>
+                </span>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <h4 class="text-2xl font-bold mb-5 dark:text-gray-200 text-green-700">
+                    Ingredients
+                </h4>
+                <p class="mb-5 dark:text-gray-200">
+                    <ul>
+                        <?php $__currentLoopData = $recipe->ingredients; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ingredient): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <li class="dark:text-gray-200"">
+                                <?php echo e($ingredient->pivot->quantity); ?> <?php echo e($ingredient->name); ?>
+
+                            </li>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </ul>
+                </p>
+            </div>
+            <div class="md:col-span-2">
+                <h4 class="text-2xl font-bold mb-5 dark:text-gray-200 text-green-700">
+                    Method
+                </h4>
+                <article class="max-w-full prose dark:prose-dark">
+                    <?php echo $recipe->instruction; ?>
+
+                </article>
+            </div>
+        </div>
+        <div class="pt-4">
+            <h5 class="text-xl font-bold mb-5 dark:text-gray-200 text-green-700">
+                Comments
+            </h5>
+            <?php
+if (! isset($_instance)) {
+    $html = \Livewire\Livewire::mount('comments', ['recipe' => $recipe])->html();
+} elseif ($_instance->childHasBeenRendered('qLwiR9u')) {
+    $componentId = $_instance->getRenderedChildComponentId('qLwiR9u');
+    $componentTag = $_instance->getRenderedChildComponentTagName('qLwiR9u');
+    $html = \Livewire\Livewire::dummyMount($componentId, $componentTag);
+    $_instance->preserveRenderedChild('qLwiR9u');
+} else {
+    $response = \Livewire\Livewire::mount('comments', ['recipe' => $recipe]);
+    $html = $response->html();
+    $_instance->logRenderedChild('qLwiR9u', $response->id(), \Livewire\Livewire::getRootElementTagName($html));
+}
+echo $html;
+?>
+        </div>
+    </div>
+</div>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\PHP\Mealing\resources\views/recipes/show.blade.php ENDPATH**/ ?>
